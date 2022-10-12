@@ -1,13 +1,10 @@
 from PIL import Image
 
 
-if __name__ == '__main__':
-    path = "Mapa_MD_no_terrain_low_res_Gray.bmp"
-    image = Image.open(path)
-    result = image
-    pixels = list(image.getdata())
+def brighten(image):
     height = image.height
     width = image.width
+    result = image
 
     value_brighten = input('Podaj wartosc z zakresu -255 - 255 o ktora obraz zostanie pojasniony lub sciemniony: ')
 
@@ -18,7 +15,10 @@ if __name__ == '__main__':
 
     result.save('output_brighten.bmp')
 
-    image = Image.open(path)
+
+def binarize(image):
+    height = image.height
+    width = image.width
     result = image
 
     value_binarize = input('Podaj wartosc graniczna binaryzacji: ')
@@ -31,3 +31,13 @@ if __name__ == '__main__':
                 result.putpixel((x, y), 255)
 
     result.save('output_binarize.bmp')
+
+
+if __name__ == '__main__':
+    path = "Mapa_MD_no_terrain_low_res_Gray.bmp"
+    image = Image.open(path)
+    brighten(image)
+    binarize(image)
+
+
+
