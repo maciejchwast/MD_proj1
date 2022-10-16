@@ -71,6 +71,31 @@ def filter(image, filter_type):
     result.save(f'output_{filter_type}.bmp')
 
 
+def dilatation_and_erosion(image, type):
+    types = ['erosion', 'dilatation']
+    if type not in types:
+        raise TypeError('Wrong type!')
+    img = image
+    height = image.height
+    width = image.width
+    result = image
+    if type == 'erosion':
+        for x in range(width):
+            for y in range(height):
+                if at_least_one_black_neighbour(img, x, y):
+                    result.putpixel((x, y), 255)
+                else:
+                    result.putpixel((x, y), 0)
+    elif type == 'dilatation':
+        for x in range(width):
+            for y in range(height):
+                if at_least_one_white_neighbour(img, x, y):
+                    result.putpixel((x, y), 0)
+                else:
+                    result.putpixel((x, y), 255)
+    result.save(f'output_{type}.bmp')
+
+
 def get_3x3_pixel_array_and_sum_with_weight(image, x, y, weight_matrix):
     retval = 0
     for i in range(-1, 2):
@@ -83,14 +108,38 @@ def get_3x3_pixel_array_and_sum_with_weight(image, x, y, weight_matrix):
     return retval
 
 
+def at_least_one_white_neighbour(image, x, y):
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            try:
+                if image.getpixel((x+i, y+j)) == 255 and (i != 0 and j != 0):
+                    return True
+            except:
+                continue
+
+
+def at_least_one_black_neighbour(image, x, y):
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            try:
+                if image.getpixel((x+i, y+j)) == 0 and (i != 0 and j != 0):
+                    return True
+            except:
+                continue
+
+
 if __name__ == '__main__':
     #path_original_img = "Mapa_MD_no_terrain_low_res_Gray.bmp"
     #img = Image.open(path_original_img)
     #brighten(img)
     #binarize(img)
 
-    path_binary = "Mapa_MD_no_terrain_low_res_Gray.bmp"
+    path_binary = "output_binarize.bmp"
     img_bin = Image.open(path_binary)
-    filter(img_bin, 'gauss')
+    #filter(img, 'gauss')
+    #filter(img, 'low_pass')
+    #filter(img, 'high_pass')
 
+    dilatation_and_erosion(img_bin, 'erosion')
+    dilatation_and_erosion(img_bin, 'dilatation')
 
