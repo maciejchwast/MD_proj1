@@ -1,113 +1,69 @@
-import pygame
-import numpy as np
-
-ALIVE_COLOR = (255, 255, 215)
-BACKGROUND_COLOR = (10, 10, 40)
-GRID_COLOR = (30, 30, 60)
-
-CELL_SIZE = 8
-
-SHOOTER = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-                     0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-                     0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                     0, 0, 1, 1, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                     0, 0, 1, 1, 0, 0, 0],
-                    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                     0, 0, 0, 0, 0, 0, 0],
-                    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-                     0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-                     0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                     0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                     0, 0, 0, 0, 0, 0, 0]
-                    ])
-
-RANDOM = ""
-
-OSCILLATOR = np.array([[0, 0, 0, 0, 1, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 1, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 1, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                       [1, 1, 1, 0, 0, 0, 1, 1, 1],
-                       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 1, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 1, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 1, 0, 0, 0, 0]
-                       ])
-
-CONSTANT = np.array([[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-                     [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
-                     [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
-                     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-                     [0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0],
-                     [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1],
-                     [0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0],
-                     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-                     [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
-                     [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
-                     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
-                     ])
-
-GLIDERS = np.array([[1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-                    [0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1],
-                    [1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-                    [0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1],
-                    [1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0]
-                    ])
+from PIL import Image
 
 
-def update(surface, cur, sz):
-    nxt = np.zeros((cur.shape[0], cur.shape[1]))
-
-    for r, c in np.ndindex(cur.shape):
-        num_alive = np.sum(cur[r - 1:r + 2, c - 1:c + 2]) - cur[r, c]
-
-        if cur[r, c] == 1 and num_alive < 2 or num_alive > 3:
-            col = ALIVE_COLOR
-        elif (cur[r, c] == 1 and 2 <= num_alive <= 3) or (cur[r, c] == 0 and num_alive == 3):
-            nxt[r, c] = 1
-            col = ALIVE_COLOR
-
-        col = col if cur[r, c] == 1 else BACKGROUND_COLOR
-        pygame.draw.rect(surface, col, (c * sz, r * sz, sz - 1, sz - 1))
-
-    return nxt
+def load_bmp():
+    src = r'./white.jpg'
+    img = Image.open(src)
+    return img
 
 
-def init(dim_x, dim_y, pattern):
-    if pattern == RANDOM:
-        return np.random.randint(2, size=(dim_x, dim_y))
-    cells = np.zeros((dim_y, dim_x))
-    pos = (3, 3)
-    cells[pos[0]:pos[0] + pattern.shape[0], pos[1]:pos[1] + pattern.shape[1]] = pattern
-    return cells
+def putFpixel(image):
+    image.putpixel((300, 0), 0)
+
+    return image
 
 
-def main(dim_x, dim_y):
-    pygame.init()
-    surface = pygame.display.set_mode((dim_x * CELL_SIZE, dim_y * CELL_SIZE))
-    pygame.display.set_caption("Gra w życie")
-    cells = init(dim_x, dim_y, GLIDERS)  # zmiana trzeciego argumentu dla roznych struktur
-    surface.fill(GRID_COLOR)
+def zamiana(liczba):
+    tablica = []
+    for i in range(8):
+        nowa = liczba % 2
+        if nowa == 0:
+            nowa = 255
+        else:
+            nowa = 0
+        tablica.append(nowa)
+        if (liczba % 2 == 0):
+            liczba = liczba / 2
+        else:
+            liczba = (liczba - 1) / 2
 
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                return
-
-        surface.fill(GRID_COLOR)
-        cells = update(surface, cells, CELL_SIZE)
-        pygame.display.update()
+    return tablica
 
 
-if __name__ == "__main__":
-    main(120, 120)
+def XRule(image, liczba):
+    width = image.width
+    height = image.height
+    for j in range(0, height - 1):
+        for i in range(0, width - 1):
+            pixel = image.getpixel((i, j))[0]
+            pixelP = image.getpixel((i - 1, j))[0]
+            pixelN = image.getpixel((i + 1, j))[0]
+            if pixelP == 0 and pixel == 0 and pixelN == 0:
+                image.putpixel((i, j + 1), zamiana(liczba)[7])
+            elif pixelP == 0 and pixel == 0 and pixelN == 255:
+                image.putpixel((i, j + 1), zamiana(liczba)[6])
+            elif pixelP == 0 and pixel == 255 and pixelN == 0:
+                image.putpixel((i, j + 1), zamiana(liczba)[5])
+            elif pixelP == 0 and pixel == 255 and pixelN == 255:
+                image.putpixel((i, j + 1), zamiana(liczba)[4])
+            elif pixelP == 255 and pixel == 0 and pixelN == 0:
+                image.putpixel((i, j + 1), zamiana(liczba)[3])
+            elif pixelP == 255 and pixel == 0 and pixelN == 255:
+                image.putpixel((i, j + 1), zamiana(liczba)[2])
+            elif pixelP == 255 and pixel == 255 and pixelN == 0:
+                image.putpixel((i, j + 1), zamiana(liczba)[1])
+            elif pixelP == 255 and pixel == 255 and pixelN == 255:
+                image.putpixel((i, j + 1), zamiana(liczba)[0])
+
+        ost = image.getpixel((i, j))
+        if ost == 0:
+            image.putpixel((1, j + 1), 0)
+
+    image.show()
+
+
+if __name__ == '__main__':
+    imag = load_bmp()
+    putFpixel(imag)
+    XRule(putFpixel(imag), 90)
+    print(zamiana(26))
